@@ -162,4 +162,6 @@ class SocraticEnvironment:
 
     def final_score(self):
         score = self.total_reward / self.MAX_TOTAL_REWARD
-        return round(max(0.0, min(1.0, score)), 3)
+        # Clamp to (0.001, 0.999) to ensure strictly between 0 and 1
+        clamped = max(0.001, min(0.999, score))
+        return round(clamped, 3)

@@ -65,7 +65,9 @@ def estimate_belief_score(student_response, misconception, correct_answer, previ
 
     delta = (correct_overlap - misconception_overlap) * 0.25
     new_belief = previous_belief + delta
-    return round(max(0.0, min(1.0, new_belief)), 3)
+    # Clamp to (0.001, 0.999) to ensure strictly between 0 and 1
+    clamped = max(0.001, min(0.999, new_belief))
+    return round(clamped, 3)
 
 
 def run_probe(probe_question, expected_keywords, student_history, misconception, correct_answer, seed=42):
@@ -92,14 +94,14 @@ Answer in 1-2 sentences only."""
         )
         answer = (completion.choices[0].message.content or "").lower()
     except Exception:
-        return 0.0
+        return 0.01  # Strictly > 0
 
     matched = sum(1 for kw in expected_keywords if kw.lower() in answer)
     ratio = matched / max(len(expected_keywords), 1)
 
     if ratio >= 0.5:
-        return 1.0
+        return 0.99  # Strictly < 1
     elif ratio >= 0.25:
         return 0.5
     else:
-        return 0.0
+        return 0.01  # Strictly > 0
