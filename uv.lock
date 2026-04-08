@@ -1,0 +1,59 @@
+version = 4
+requires-python = ">=3.11"
+
+[[package]]
+name = "fastapi"
+version = "0.115.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["pydantic", "starlette", "typing-extensions"]
+
+[[package]]
+name = "uvicorn"
+version = "0.30.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["click", "h11"]
+
+[[package]]
+name = "pydantic"
+version = "2.7.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["annotated-types", "pydantic-core", "typing-extensions"]
+
+[[package]]
+name = "httpx"
+version = "0.27.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["httpcore", "certifi", "idna", "sniffio"]
+
+[[package]]
+name = "requests"
+version = "2.31.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["charset-normalizer", "idna", "urllib3", "certifi"]
+
+[[package]]
+name = "openai"
+version = "1.35.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["httpx", "pydantic", "typing-extensions", "distro"]
+
+[[package]]
+name = "openenv"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = ["pydantic", "requests"]
+
+[[package]]
+name = "starlette"
+version = "0.40.0"
+source = { registry = "https://pypi.org/simple" }
+
+[[package]]
+name = "click"
+version = "8.1.7"
+source = { registry = "https://pypi.org/simple" }
+
+[[package]]
+name = "h11"
+version = "0.14.0"
+source = { registry = "https://pypi.org/simple" }
