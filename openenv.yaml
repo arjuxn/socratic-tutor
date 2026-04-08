@@ -1,0 +1,89 @@
+name: socratic-tutor-env
+version: "1.0.0"
+description: >
+  An OpenEnv environment for training AI agents to teach simulated students.
+  Three tasks of increasing difficulty with shaped reward via belief-state tracking.
+author: "Arjun"
+license: MIT
+tasks:
+  - id: easy
+    name: "Fact relay"
+    difficulty: easy
+    max_steps: 10
+  - id: medium
+    name: "Misconception correction"
+    difficulty: medium
+    max_steps: 8
+  - id: hard
+    name: "Socratic chain"
+    difficulty: hard
+    max_steps: 8
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  health: GET /health
+
+openenv_spec_version: "0.1"
+environment_type: text
+
+action_space:
+  type: object
+  properties:
+    utterance:
+      type: string
+      minLength: 1
+      maxLength: 1000
+      description: "Teacher's utterance to guide the student"
+  required:
+    - utterance
+
+observation_space:
+  type: object
+  properties:
+    student_response:
+      type: string
+      description: "Student's response to teacher's utterance"
+    belief_score:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+      description: "Probability that student has correct understanding (0=wrong, 1=correct)"
+    probe_result:
+      type: ["number", "null"]
+      minimum: 0.0
+      maximum: 1.0
+      description: "Result of knowledge probe (null if not probed this turn)"
+    turn_number:
+      type: integer
+      description: "Current turn number in the episode"
+    done:
+      type: boolean
+      description: "Whether the episode is finished"
+    task_id:
+      type: string
+      description: "The task being performed (easy/medium/hard)"
+    feedback:
+      type: string
+      description: "Feedback on teacher's last utterance"
+  required:
+    - student_response
+    - belief_score
+    - turn_number
+    - done
+    - task_id
+    - feedback
+
+reward_space:
+  type: number
+  minimum: 0.0
+  maximum: 5.0
+  description: "Cumulative reward over episode (shaped by belief improvement and probe success)"
+
+tags:
+  - education
+  - dialogue
+  - llm-as-environment
+  - reward-shaping
+  - misconception-correction
+  - socratic-method
