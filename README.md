@@ -1,3 +1,12 @@
+---
+title: Socratic Tutor Environment
+emoji: 🧑‍🏫
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # Socratic Tutor Environment
 
 A real-world OpenEnv environment for training and evaluating AI teacher agents using the **Socratic method**—guiding students toward correct understanding through strategic questioning and dialogue rather than direct instruction.
