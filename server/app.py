@@ -74,95 +74,381 @@ async def ui():
     return """
     <html>
         <head>
-            <title>Socratic Tutor - Interactive UI</title>
+            <title>Socratic Tutor</title>
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-                .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-                .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-                .header h1 { font-size: 28px; margin-bottom: 10px; }
-                .header p { opacity: 0.9; }
-                .content { padding: 30px; }
-                .section { margin-bottom: 25px; }
-                .section-title { font-size: 14px; font-weight: 600; color: #667eea; text-transform: uppercase; margin-bottom: 12px; }
-                select, textarea, input { width: 100%; padding: 12px; font-size: 14px; border: 2px solid #e0e0e0; border-radius: 6px; font-family: inherit; }
-                select:focus, textarea:focus, input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
-                .button-group { display: flex; gap: 10px; }
-                button { flex: 1; padding: 12px 20px; font-size: 14px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
-                .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-                .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
-                .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-                .output { background: #f8f9fa; border-left: 4px solid #667eea; padding: 16px; border-radius: 6px; margin-bottom: 15px; display: none; }
-                .output.show { display: block; }
-                .output-label { color: #667eea; font-weight: 600; margin-bottom: 8px; }
-                .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-                .metric { background: #f0f4ff; padding: 16px; border-radius: 8px; text-align: center; }
-                .metric-value { font-size: 24px; font-weight: bold; color: #667eea; }
-                .metric-label { font-size: 12px; color: #666; margin-top: 8px; text-transform: uppercase; }
-                .episode-done { display: none; background: #d4edda; border: 2px solid #28a745; padding: 16px; border-radius: 8px; margin: 20px 0; color: #155724; text-align: center; }
-                .episode-done.show { display: block; }
-                .episode-done-title { font-weight: 600; font-size: 16px; margin-bottom: 8px; }
-                .loading { display: none; text-align: center; color: #667eea; }
-                .loading.show { display: block; }
-                .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top-color: #667eea; border-radius: 50%; animation: spin 0.6s linear infinite; }
-                @keyframes spin { to { transform: rotate(360deg); } }
+                html, body { height: 100%; overflow: hidden; }
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    background: #0a0e27;
+                    color: #e0e0e0;
+                }
+                .container {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    height: 100vh;
+                }
+                .left {
+                    background: #0a0e27;
+                    padding: 60px 50px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+                .right {
+                    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+                    padding: 60px 50px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .logo {
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin-bottom: 60px;
+                    letter-spacing: 1px;
+                    color: #ffffff;
+                }
+                h1 {
+                    font-size: 46px;
+                    font-weight: 700;
+                    margin-bottom: 20px;
+                    color: #ffffff;
+                    line-height: 1.2;
+                }
+                .subtitle {
+                    font-size: 16px;
+                    color: #888;
+                    margin-bottom: 50px;
+                    line-height: 1.6;
+                }
+                .form-group {
+                    margin-bottom: 24px;
+                }
+                .form-label {
+                    display: block;
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: #777;
+                    margin-bottom: 10px;
+                }
+                select, textarea {
+                    width: 100%;
+                    padding: 14px 16px;
+                    background: #1a1f3a;
+                    border: 1px solid #2a3050;
+                    color: #e0e0e0;
+                    border-radius: 6px;
+                    font-size: 15px;
+                    font-family: inherit;
+                    transition: all 0.3s;
+                }
+                select option {
+                    background: #1a1f3a;
+                    color: #e0e0e0;
+                }
+                select:hover, textarea:hover {
+                    border-color: #3a4060;
+                }
+                select:focus, textarea:focus {
+                    outline: none;
+                    border-color: #4CAF50;
+                    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+                }
+                button {
+                    width: 100%;
+                    padding: 14px 16px;
+                    background: #4CAF50;
+                    color: #1a1f3a;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                }
+                button:hover {
+                    background: #45a049;
+                    transform: translateY(-1px);
+                }
+                button:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+                .stats {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 16px;
+                    margin-bottom: 50px;
+                    display: none;
+                }
+                .stats.show {
+                    display: grid;
+                }
+                .stat {
+                    background: #1a1f3a;
+                    padding: 18px;
+                    border-radius: 6px;
+                    border: 1px solid #2a3050;
+                    text-align: center;
+                }
+                .stat-value {
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: #4CAF50;
+                    margin-bottom: 6px;
+                }
+                .stat-label {
+                    font-size: 12px;
+                    color: #888;
+                    text-transform: uppercase;
+                    letter-spacing: 0.3px;
+                }
+                .chat-box {
+                    background: #1a1f3a;
+                    border: 1px solid #2a3050;
+                    border-radius: 6px;
+                    padding: 24px;
+                    margin-bottom: 30px;
+                    min-height: 200px;
+                    max-height: 400px;
+                    overflow-y: auto;
+                    display: none;
+                }
+                .chat-box.show {
+                    display: block;
+                }
+                .message {
+                    margin-bottom: 20px;
+                }
+                .message-label {
+                    font-size: 11px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    color: #888;
+                    margin-bottom: 6px;
+                    letter-spacing: 0.3px;
+                }
+                .message-text {
+                    color: #e0e0e0;
+                    line-height: 1.6;
+                    padding: 12px;
+                    background: #0a0e27;
+                    border-radius: 4px;
+                }
+                .loading {
+                    display: none;
+                    text-align: center;
+                    color: #888;
+                    margin-bottom: 20px;
+                }
+                .loading.show {
+                    display: block;
+                }
+                .pulse {
+                    display: inline-block;
+                }
+                .dot {
+                    display: inline-block;
+                    width: 6px;
+                    height: 6px;
+                    margin: 0 3px;
+                    background: #4CAF50;
+                    border-radius: 50%;
+                    animation: pulse-dot 1.4s infinite;
+                }
+                .dot:nth-child(2) { animation-delay: 0.2s; }
+                .dot:nth-child(3) { animation-delay: 0.4s; }
+                @keyframes pulse-dot {
+                    0%, 80%, 100% { opacity: 0.3; }
+                    40% { opacity: 1; }
+                }
+                .completion {
+                    display: none;
+                    background: #1a1f3a;
+                    border: 1px solid #2a3050;
+                    border-radius: 6px;
+                    padding: 24px;
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+                .completion.show {
+                    display: block;
+                }
+                .completion-msg {
+                    color: #4CAF50;
+                    font-weight: 600;
+                    margin-bottom: 12px;
+                }
+                .completion-score {
+                    font-size: 32px;
+                    font-weight: 700;
+                    color: #4CAF50;
+                }
+                .right-content {
+                    text-align: center;
+                    max-width: 400px;
+                }
+                .icon-box {
+                    width: 80px;
+                    height: 80px;
+                    margin: 0 auto 30px;
+                    background: #ffffff;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                }
+                .geo-shape {
+                    width: 50px;
+                    height: 50px;
+                    position: relative;
+                }
+                .geo-cube {
+                    width: 100%;
+                    height: 100%;
+                    border: 2px solid #4CAF50;
+                    transform: perspective(500px) rotateX(20deg) rotateY(-20deg);
+                    border-radius: 4px;
+                }
+                .right-title {
+                    font-size: 42px;
+                    font-weight: 700;
+                    color: #0a0e27;
+                    margin-bottom: 16px;
+                    line-height: 1.2;
+                }
+                .right-text {
+                    font-size: 15px;
+                    color: #666;
+                    margin-bottom: 40px;
+                    line-height: 1.7;
+                }
+                .features {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+                    margin-top: 50px;
+                }
+                .feature {
+                    text-align: center;
+                }
+                .feature-icon {
+                    font-size: 24px;
+                    margin-bottom: 12px;
+                    color: #4CAF50;
+                }
+                .feature-text {
+                    font-size: 13px;
+                    color: #666;
+                }
+                ::-webkit-scrollbar {
+                    width: 6px;
+                }
+                ::-webkit-scrollbar-track {
+                    background: #1a1f3a;
+                }
+                ::-webkit-scrollbar-thumb {
+                    background: #2a3050;
+                    border-radius: 3px;
+                }
+                ::-webkit-scrollbar-thumb:hover {
+                    background: #3a4060;
+                }
             </style>
         </head>
         <body>
             <div class="container">
-                <div class="header">
-                    <h1>🧑‍🏫 Socratic Tutor</h1>
-                    <p>Interactive Demo - Teach an AI student through dialogue</p>
+                <!-- Left Column -->
+                <div class="left">
+                    <div class="logo">Socratic</div>
+                    <h1>Learn Through Dialogue</h1>
+                    <p class="subtitle">Engage with an interactive tutor that challenges your understanding through thoughtful questioning.</p>
+
+                    <div class="form-group">
+                        <label class="form-label">Difficulty Level</label>
+                        <select id="taskSelect">
+                            <option value="easy">Gravity - Elementary</option>
+                            <option value="medium">Electricity - Intermediate</option>
+                            <option value="hard">Evolution - Advanced</option>
+                        </select>
+                    </div>
+
+                    <button onclick="resetEpisode()">Start Session</button>
+
+                    <div class="stats" id="stats">
+                        <div class="stat">
+                            <div class="stat-value" id="turnCount">0</div>
+                            <div class="stat-label">Turn</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="totalReward">0.00</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="beliefScore">10%</div>
+                            <div class="stat-label">Understanding</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-box" id="chatBox">
+                        <div class="message">
+                            <div class="message-label">Instructor</div>
+                            <div class="message-text" id="studentResponse"></div>
+                        </div>
+                    </div>
+
+                    <div class="completion" id="completion">
+                        <div class="completion-msg">Session Complete</div>
+                        <div class="completion-score" id="finalScore">—</div>
+                    </div>
+
+                    <div class="loading" id="loading">
+                        <span>Thinking</span><span class="pulse"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Your Response</label>
+                        <textarea id="teacherMsg" placeholder="Type your response..."></textarea>
+                    </div>
+
+                    <button onclick="sendMessage()" id="sendBtn">Send</button>
                 </div>
 
-                <div class="content">
-                    <div class="section">
-                        <div class="section-title">🎯 Select Task</div>
-                        <select id="taskSelect">
-                            <option value="easy">Easy - Gravity (Galileo's Falling Objects)</option>
-                            <option value="medium">Medium - Electricity (Current Conservation)</option>
-                            <option value="hard">Hard - Evolution (Socratic Questions Only)</option>
-                        </select>
-                        <div class="button-group" style="margin-top: 12px;">
-                            <button class="btn-primary" onclick="resetEpisode()">Start New Episode</button>
+                <!-- Right Column -->
+                <div class="right">
+                    <div class="right-content">
+                        <div class="icon-box">
+                            <div class="geo-shape">
+                                <div class="geo-cube"></div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="metrics" id="metrics" style="display: none;">
-                        <div class="metric">
-                            <div class="metric-value" id="turnCount">0</div>
-                            <div class="metric-label">Turn #</div>
+                        <div class="right-title">Socratic Learning</div>
+                        <p class="right-text">Master concepts through guided dialogue. Challenge assumptions and develop deeper understanding.</p>
+                        
+                        <div class="features">
+                            <div class="feature">
+                                <div class="feature-icon">▧</div>
+                                <div class="feature-text">Adaptive Difficulty</div>
+                            </div>
+                            <div class="feature">
+                                <div class="feature-icon">⚡</div>
+                                <div class="feature-text">Real-time Feedback</div>
+                            </div>
+                            <div class="feature">
+                                <div class="feature-icon">◆</div>
+                                <div class="feature-text">Progress Tracking</div>
+                            </div>
                         </div>
-                        <div class="metric">
-                            <div class="metric-value" id="totalReward">0.00</div>
-                            <div class="metric-label">Total Reward</div>
-                        </div>
-                        <div class="metric">
-                            <div class="metric-value" id="beliefScore">0.1</div>
-                            <div class="metric-label">Belief Score</div>
-                        </div>
-                    </div>
-
-                    <div class="output" id="output">
-                        <div class="output-label">👨‍🎓 Student Response</div>
-                        <p id="studentResponse"></p>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">💬 Your Message</div>
-                        <textarea id="teacherMsg" placeholder="Ask a question or provide guidance..." style="height: 100px; resize: vertical;"></textarea>
-                        <div class="button-group" style="margin-top: 12px;">
-                            <button class="btn-primary" onclick="sendMessage()" id="sendBtn">Send & Get Response</button>
-                        </div>
-                        <div class="loading" id="loading">
-                            <div class="spinner"></div>
-                            <p style="margin-top: 10px;">Waiting for student response...</p>
-                        </div>
-                    </div>
-
-                    <div class="episode-done" id="episodeDone">
-                        <div class="episode-done-title">✅ Episode Complete!</div>
-                        <div>Final Score: <strong id="finalScoreMsg">-</strong></div>
                     </div>
                 </div>
             </div>
@@ -179,9 +465,10 @@ async def ui():
                         });
                         const data = await r.json();
                         updateOutput(data);
-                        document.getElementById('metrics').style.display = 'grid';
+                        document.getElementById('stats').classList.add('show');
+                        document.getElementById('chatBox').classList.add('show');
                         document.getElementById('totalReward').textContent = '0.00';
-                        document.getElementById('episodeDone').classList.remove('show');
+                        document.getElementById('completion').classList.remove('show');
                         document.getElementById('teacherMsg').value = '';
                     } finally {
                         document.getElementById('sendBtn').disabled = false;
@@ -190,7 +477,7 @@ async def ui():
 
                 async function sendMessage() {
                     const msg = document.getElementById('teacherMsg').value.trim();
-                    if (!msg) { alert('Please enter a message'); return; }
+                    if (!msg) return;
                     
                     document.getElementById('sendBtn').disabled = true;
                     document.getElementById('loading').classList.add('show');
@@ -210,8 +497,8 @@ async def ui():
                         
                         if (data.done) {
                             const score = await (await fetch('/score')).json();
-                            document.getElementById('finalScoreMsg').textContent = score.score.toFixed(3);
-                            document.getElementById('episodeDone').classList.add('show');
+                            document.getElementById('finalScore').textContent = Math.round(score.score * 100) + '%';
+                            document.getElementById('completion').classList.add('show');
                         }
                     } finally {
                         document.getElementById('sendBtn').disabled = false;
@@ -220,10 +507,9 @@ async def ui():
                 }
 
                 function updateOutput(obs) {
-                    document.getElementById('output').classList.add('show');
                     document.getElementById('studentResponse').textContent = obs.student_response;
                     document.getElementById('turnCount').textContent = obs.turn_number;
-                    document.getElementById('beliefScore').textContent = obs.belief_score.toFixed(3);
+                    document.getElementById('beliefScore').textContent = Math.round(obs.belief_score * 100) + '%';
                 }
             </script>
         </body>
